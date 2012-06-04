@@ -45,3 +45,20 @@ body {
   margin-right: 10px;
   -webkit-box-shadow: inset -1px -2px 8px hsl(200,0%,70%);
 }
+
+#write_topic {
+  width: 90%;
+  display: none;
+}
+
+textarea {
+  margin-left: 20px;
+  height: 24px;
+  border: 0px;
+  resize: none;
+  padding: 4px;
+}
+
+#say {
+  width: 90%;
+}
