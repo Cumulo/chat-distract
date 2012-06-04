@@ -8,7 +8,7 @@ get = function(id) {
 mode = 'post';
 
 window.onload = function() {
-  var button, socket;
+  var button, click_function, name, socket, write_topic, _ref;
   socket = io.connect('http://localhost:8000/chat');
   socket.on('need-refresh', function() {
     return location.reload();
@@ -17,7 +17,29 @@ window.onload = function() {
     return console.log('ready');
   });
   button = get('button');
-  return button.onclick = function() {
-    return alert('clicked');
+  write_topic = get('write_topic');
+  click_function = function() {
+    var topic_content;
+    if (mode === 'post') {
+      write_topic.style.display = 'block';
+      button.innerText = 'Send';
+      button.style.width = '40px';
+      return mode = 'topic';
+    } else if (mode === 'topic') {
+      topic_content = write_topic.value;
+      console.log(topic_content);
+      button.innerText = '+';
+      write_topic.style.display = 'none';
+      button.style.width = '13px';
+      return mode = 'post';
+    }
   };
+  button.onclick = click_function;
+  while (name == null) {
+    name = prompt('choose a name:');
+    if (!((1 < (_ref = name.length) && _ref < 20))) {
+      name = void 0;
+    }
+  }
+  return socket.emit('set-name', name);
 };

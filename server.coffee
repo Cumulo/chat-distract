@@ -37,5 +37,5 @@ chat = io.of('/chat').on 'connection', (socket) ->
 
   socket.on 'sync-post', (data) ->
 
-fs.watch 'app/me/handle.coffee', ->
+fs.watch 'app/me/handle.js', ->
   chat.emit 'need-refresh'
