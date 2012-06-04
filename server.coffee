@@ -1,8 +1,11 @@
 
+fs = require 'fs'
+
 handler = (req, res) ->
   res.end 'chat-server'
 app = (require 'http').createServer handler
-io = (require 'socket.io').listen app, {origins: '*:*'}
+io = (require 'socket.io').listen app, origins: '*:*'
+io.set 'log level', 1
 app.listen 8000
 
 time = ->
@@ -13,7 +16,9 @@ time = ->
 
 topic_store = []
 
-chat = io.of('chat').on 'connection', (socket) ->
+chat = io.of('/chat').on 'connection', (socket) ->
+
+  socket.emit 'ready'
 
   my =
     name: undefined
@@ -31,3 +36,6 @@ chat = io.of('chat').on 'connection', (socket) ->
     chat.emit 'add-topic', 8
 
   socket.on 'sync-post', (data) ->
+
+fs.watch 'app/me/handle.coffee', ->
+  chat.emit 'need-refresh'
