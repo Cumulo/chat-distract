@@ -14,10 +14,12 @@ time = ->
   m = now.getMinutes()
   "#{h}:#{m}"
 
+mark = -> new Date().getTime().toString()[4..]
+
 topic_store = []
+push_topic = (item) -> topic_store.push item
 
 chat = io.of('/chat').on 'connection', (socket) ->
-
   socket.emit 'ready'
 
   my =
@@ -30,10 +32,20 @@ chat = io.of('/chat').on 'connection', (socket) ->
     my.name = (
       if name.length < 1 then '?'
       else if name.length > 20 then name[0..20])
+    console.log 'now name is', name
 
   socket.on 'add-topic', (content) ->
     content = String  content
-    chat.emit 'add-topic', 8
+    if content.length < 5 then return ''
+    else if content.length > 30 then content[0..30]
+    store =
+      id: mark()
+      content: content
+      delete_vote: 0
+      last: mark()
+    push_topic store
+    console.log topic_store
+    chat.emit 'add-topic', store
 
   socket.on 'sync-post', (data) ->
 
