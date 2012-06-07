@@ -1,7 +1,7 @@
 
 ::-webkit-scrollbar {
   width: 4px;
-  background: hsl(30,30%,80%);
+  background: hsl(30,30%,90%);
 }
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 4px;
@@ -9,7 +9,7 @@
 }
 
 body {
-  background: url(http://python-assets.b0.upaiyun.com/june/img/main_bg.gif);
+  background: hsl(200, 80%,96%);
   margin: 0px;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 15px;
@@ -49,12 +49,13 @@ body {
 }
 
 #right {
-  background: hsla(240,0%,70%,0.4);
+  background: hsla(180,40%,90%,0.8);
   width: 85%;
   overflow-y: scroll;
+  padding-bottom: 400px;
 }
 
-.date, .name {
+.date, .name, .reply {
   display: inline-block;
   margin-right: 20px;
   line-height: 20px;
@@ -73,6 +74,10 @@ body {
   font-family: 'wenquanyi micro hei';
 }
 
+.head {
+  background: hsl(240,60%,97%);
+}
+
 #name_msg, #create_msg {
   margin: 80px 40px 20px;
 }
@@ -86,6 +91,11 @@ body {
   -webkit-border-radius: 3px;
   font-size: 18px;
   padding: 8px;
+  background: hsl(200,10%,96%);
+}
+
+#name_box:focus, #create_box:focus {
+  background: white;
 }
 
 #create_box {
@@ -95,4 +105,15 @@ body {
 
 #name_send, #create_send {
   margin: 0px 40px;
+}
+
+#block {
+  display: inline-block;
+  color: hsla(0,0%,0%,0);
+  -webkit-transition-duration: 0.4s;
+}
+
+#block:hover {
+  color: hsla(0,80%,80%,0.6);
+  -webkit-transition-duration: 0.4s;
 }

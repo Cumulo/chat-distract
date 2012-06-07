@@ -26,9 +26,10 @@ chat = io.of('/chat').on 'connection', (socket) ->
   my =
     name: '?'
     thread: undefined
-    topic: 'default'
+    topic: undefined
 
   socket.on 'set-name', (name) ->
+    name = String name
     name = name.trim()
     my.name = (
       if name.length < 1 then '?'
@@ -43,16 +44,26 @@ chat = io.of('/chat').on 'connection', (socket) ->
     store =
       id: mark()
       time: time()
+      reply: 0
       author: my.name
       content: content
     push_topic store
-    console.log topic_store
     chat.emit 'add-topic', store
 
   socket.on 'sync-post', (data) ->
 
-  socket.on 'topic', (data) -> console.log data
+  socket.on 'topic', (topic) ->
+    topic = String topic
+    if topic isnt my.topic
+      if my.topic? then socket.leave my.topic
+      socket.join topic
+      my.topic = topic
+      socket.emit 'topic', topic
+
+  socket.on 'away', ->
+    if my.topic?
+      socket.leave my.topic
+      my.topic = undefined
 
 fs.watch 'app/me/handle.js', ->
   chat.emit 'need-refresh'
-chat.emit 'need-refresh'

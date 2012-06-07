@@ -26,8 +26,10 @@ window.onload = ->
       say.style.color = (
         if item is 'say' then 'hsl(0,0%,50%)'
         else 'hsl(0,0%,80%)' )
+      if item isnt 'say' then socket.emit 'away'
 
   topic_store = {}
+  post_store = {}
   
   say_action = ->
       change_mode 'say'
@@ -66,6 +68,7 @@ window.onload = ->
             create_msg.innerText = 'OK, You\'ve Sent the Topic Successfully'
             create_send.innerText = 'Sent'
             create_send.onclick  = ->
+            create_box.blur()
           create_box.onkeydown = (e) ->
             if e.keyCode is 13
               create_send.onclick()
@@ -105,6 +108,7 @@ window.onload = ->
             name_msg.innerText = 'Already Sent'
             name_send.innerText = 'Sent'
             name_send.onclick = ->
+            name_box.blur()
           name_box.onkeydown = (e) ->
             if e.keyCode is 13
               name_send.onclick()
@@ -117,19 +121,18 @@ window.onload = ->
   else name.onclick()
 
   clear.onclick = ->
-    topic_list = []
     topic_store = {}
-    socket.emit 'fresh-list', (list) ->
-      console.log list
-
+    socket.emit 'fresh-list'
 
   render_topics = ->
+    console.log 'do render_topics'
     html = ''
     for key, value of topic_store
-      html += "<div class='post'>
-        <div class='date'>#{value.id}</div>
+      html += "<div class='post' id='#{value.id}'>
+        <div class='date'>#{value.time}</div>
+        <div class='reply'>+#{value.reply}</div>
         <div class='name'>#{value.author}</div>
-        <div class='text' id='#{value.id}'>#{value.content}</div>
+        <div class='text'>#{value.content}</div>
         </div>"
     right.innerHTML = html
     for key, value of topic_store
@@ -142,14 +145,40 @@ window.onload = ->
     render_topics()
 
   socket.on 'add-topic', (data) ->
-    console.log topic_store
     topic_store[data.id] = data
-    console.log mode
     if mode is 'topics'
-      right.innerHTML += "<div class='post'>
-          <div class='date'>#{data.id}</div>
+      add_div = document.createElement 'div'
+      add_div.setAttribute 'class', 'post'
+      add_div.innerHTML = "
+          <div class='date'>#{data.time}</div>
+          <div class='reply'>+#{value.reply}</div>
           <div class='name'>#{data.author}</div>
-          <div class='text' id='#{data.id}'>#{data.content}</div>
-          </div>"
-      (get data.id).onclick = ->
-        do -> socket.emit 'topic', data.id
+          <div class='text'>#{data.content}</div>"
+      right.appendChild add_div
+      add_div.onclick = ->
+        ((key) -> socket.emit 'topic', key) data.id
+
+  socket.on 'topic', (topic) ->
+    if mode isnt 'say'
+      change_mode 'say'
+      if topic_store[topic]? then topic_view = topic_store[topic]
+      else topic_view =
+        id: topic
+        reply: -1
+        name: '?'
+        text: '??'
+      right.innerHTML = "
+        <div class='post head'>
+          <div class='date'>#{topic_view.time}</div>
+          <div class='name'>#{topic_view.author}</div>
+          <div id='block'>Click to Send Remove Signal</div>
+          <div class='text'>#{topic_view.content}</div>
+        </div>"
+      if post_store[topic]?
+        for key, value of post_store[topic]
+          right.innerHTML += "
+            <div class='post'>
+              <div class='date'>#{value.time}</div>
+              <div class='name'>#{value.author}</div>
+              <div class='text'>#{value.content}</div>
+            </div>"
