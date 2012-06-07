@@ -46,13 +46,48 @@ window.onload = function() {
     }
   };
   create.onclick = function() {
+    var create_box, create_msg, create_send;
     if (mode !== 'create') {
       change_mode('create');
-      return right.innerHTML = 'create mode';
+      right.innerHTML = '<div id="create_msg">Input A Name: (5 < Length < 20)</div>\
+        <textarea id="create_box"></textarea>\
+        <div id="create_send">Waiting</div>';
+      create_msg = get('create_msg');
+      create_box = get('create_box');
+      create_send = get('create_send');
+      create_box.focus();
+      return create_box.oninput = function() {
+        if (create_box.value.length < 6) {
+          create_msg.innerText = 'Add More Words to be a Topic:';
+          create_send.innerText = 'Waiting';
+          create_send.onclick = function() {};
+          return create_send.onkeydown = function() {};
+        } else if (create_box.value.length > 40) {
+          create_msg.innerText = 'The Title Contains too many Words..';
+          create_send.innerText = 'Waiting';
+          create_send.onclick = function() {};
+          return create_send.onkeydown = function() {};
+        } else {
+          create_msg.innerText = 'Right Length now';
+          create_send.innerText = 'Send';
+          create_send.onclick = function() {
+            socket.emit('add-topic', create_box.value);
+            create_msg.innerText = 'OK, You\'ve Sent the Topic Successfully';
+            create_send.innerText = 'Sent';
+            return create_send.onclick = function() {};
+          };
+          return create_send.onkeydown = function(e) {
+            if (e.keyCode === 13) {
+              create_send.onclick();
+              return false;
+            }
+          };
+        }
+      };
     }
   };
   say.onclick = function() {
-    if (mode !== 'say') {
+    if (mode === 'say') {
       return say_action();
     }
   };
@@ -60,7 +95,7 @@ window.onload = function() {
     var name_box, name_msg, name_send;
     if (mode !== 'name') {
       change_mode('name');
-      right.innerHTML = '<div id="name_msg">Input A Name: (1 < Length < 20)</div>\
+      right.innerHTML = '<div id="name_msg">Add a Topic here: (5 < Length < 40)</div>\
         <textarea id="name_box"></textarea>\
         <div id="name_send">Waiting</div>';
       name_msg = get('name_msg');
@@ -71,18 +106,21 @@ window.onload = function() {
         if (name_box.value.length < 2) {
           name_msg.innerText = 'Too Short';
           name_send.innerText = 'Waiting';
-          return name_send.onclick = function() {};
+          name_send.onclick = function() {};
+          return name_box.onkeydown = function() {};
         } else if (name_box.value.length > 20) {
           name_msg.innerText = 'Too Long now..';
           name_send.innerText = 'Waiting';
-          return name_send.onclick = function() {};
+          name_send.onclick = function() {};
+          return name_box.onkeydown = function() {};
         } else {
           name_msg.innerText = 'This name should be OK';
           name_send.innerText = 'Send';
           name_send.onclick = function() {
             socket.emit('set-name', name_box.value);
             name_msg.innerText = 'Already Sent';
-            return name_send.innerText = 'Sent';
+            name_send.innerText = 'Sent';
+            return name_send.onclick = function() {};
           };
           return name_box.onkeydown = function(e) {
             if (e.keyCode === 13) {

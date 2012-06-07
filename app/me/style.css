@@ -73,11 +73,11 @@ body {
   font-family: 'wenquanyi micro hei';
 }
 
-#name_msg {
+#name_msg, #create_msg {
   margin: 80px 40px 20px;
 }
 
-#name_box {
+#name_box, #create_box {
   margin: 0px 40px 20px;
   width: 400px;
   height: 40px;
@@ -88,6 +88,11 @@ body {
   padding: 8px;
 }
 
-#name_send {
+#create_box {
+  width: 700px;
+  font-size: 16px;
+}
+
+#name_send, #create_send {
   margin: 0px 40px;
 }
