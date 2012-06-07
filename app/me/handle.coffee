@@ -9,7 +9,6 @@ window.onload = ->
     console.log 'ready'
 
   window.focus()
-  named = no
   saying = no
   mode = ''
 
@@ -28,7 +27,6 @@ window.onload = ->
         if item is 'say' then 'hsl(0,0%,50%)'
         else 'hsl(0,0%,80%)' )
 
-  topic_list = []
   topic_store = {}
   
   say_action = ->
@@ -37,13 +35,12 @@ window.onload = ->
   topics.onclick = ->
     if mode isnt 'topics'
       change_mode 'topics'
-      for item in topic_list
-        log item
+      render_topics()
 
   create.onclick = ->
     if mode isnt 'create'
       change_mode 'create'
-      right.innerHTML = '<div id="create_msg">Input A Name: (5 < Length < 20)</div>
+      right.innerHTML = '<div id="create_msg">Start a New Topic Here: (5 < Length < 40)</div>
         <textarea id="create_box"></textarea>
         <div id="create_send">Waiting</div>'
       create_msg = get 'create_msg'
@@ -69,18 +66,19 @@ window.onload = ->
             create_msg.innerText = 'OK, You\'ve Sent the Topic Successfully'
             create_send.innerText = 'Sent'
             create_send.onclick  = ->
-          create_send.onkeydown = (e) ->
+          create_box.onkeydown = (e) ->
             if e.keyCode is 13
               create_send.onclick()
               false
+    else (get 'create_box').focus()
 
   say.onclick = ->
     if mode is 'say' then say_action()
 
-  do name.onclick = ->
+  name.onclick = ->
     if mode isnt 'name'
       change_mode 'name'
-      right.innerHTML = '<div id="name_msg">Add a Topic here: (5 < Length < 40)</div>
+      right.innerHTML = '<div id="name_msg">Set Your Name: (1 < Length < 20)</div>
         <textarea id="name_box"></textarea>
         <div id="name_send">Waiting</div>'
       name_msg = get 'name_msg'
@@ -103,6 +101,7 @@ window.onload = ->
           name_send.innerText = 'Send'
           name_send.onclick = ->
             socket.emit 'set-name', name_box.value
+            localStorage.name = name_box.value
             name_msg.innerText = 'Already Sent'
             name_send.innerText = 'Sent'
             name_send.onclick = ->
@@ -112,7 +111,45 @@ window.onload = ->
               false
     else (get 'name_box').focus()
 
+  if localStorage.name?
+    socket.emit 'set-name', localStorage.name
+    socket.emit 'fresh-list'
+  else name.onclick()
+
   clear.onclick = ->
     topic_list = []
     topic_store = {}
-    socket.emit 'reload'
+    socket.emit 'fresh-list', (list) ->
+      console.log list
+
+
+  render_topics = ->
+    html = ''
+    for key, value of topic_store
+      html += "<div class='post'>
+        <div class='date'>#{value.id}</div>
+        <div class='name'>#{value.author}</div>
+        <div class='text' id='#{value.id}'>#{value.content}</div>
+        </div>"
+    right.innerHTML = html
+    for key, value of topic_store
+      ((key) ->
+        (get key).onclick = ->
+          socket.emit 'topic', key) key
+
+  socket.on 'fresh-list', (data) ->
+    topic_store = data
+    render_topics()
+
+  socket.on 'add-topic', (data) ->
+    console.log topic_store
+    topic_store[data.id] = data
+    console.log mode
+    if mode is 'topics'
+      right.innerHTML += "<div class='post'>
+          <div class='date'>#{data.id}</div>
+          <div class='name'>#{data.author}</div>
+          <div class='text' id='#{data.id}'>#{data.content}</div>
+          </div>"
+      (get data.id).onclick = ->
+        do -> socket.emit 'topic', data.id

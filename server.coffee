@@ -16,22 +16,24 @@ time = ->
 
 mark = -> new Date().getTime().toString()[4..]
 
-topic_store = []
-push_topic = (item) -> topic_store.push item
+topic_store = {}
+push_topic = (item) -> topic_store[item.id] = item
 
 chat = io.of('/chat').on 'connection', (socket) ->
-  socket.emit 'ready'
+  socket.on 'fresh-list', ->
+    socket.emit 'fresh-list', topic_store
 
   my =
-    name: undefined
-    thread : undefined
+    name: '?'
+    thread: undefined
     topic: 'default'
 
   socket.on 'set-name', (name) ->
     name = name.trim()
     my.name = (
       if name.length < 1 then '?'
-      else if name.length > 20 then name[0..20])
+      else if name.length > 20 then name[0..20]
+      else name)
     console.log 'now name is', name
 
   socket.on 'add-topic', (content) ->
@@ -40,14 +42,17 @@ chat = io.of('/chat').on 'connection', (socket) ->
     else if content.length > 30 then content[0..30]
     store =
       id: mark()
+      time: time()
+      author: my.name
       content: content
-      delete_vote: 0
-      last: mark()
     push_topic store
     console.log topic_store
     chat.emit 'add-topic', store
 
   socket.on 'sync-post', (data) ->
 
+  socket.on 'topic', (data) -> console.log data
+
 fs.watch 'app/me/handle.js', ->
   chat.emit 'need-refresh'
+chat.emit 'need-refresh'
