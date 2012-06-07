@@ -30,9 +30,6 @@ window.onload = ->
 
   topic_store = {}
   post_store = {}
-  
-  say_action = ->
-      change_mode 'say'
 
   topics.onclick = ->
     if mode isnt 'topics'
@@ -74,9 +71,6 @@ window.onload = ->
               create_send.onclick()
               false
     else (get 'create_box').focus()
-
-  say.onclick = ->
-    if mode is 'say' then say_action()
 
   name.onclick = ->
     if mode isnt 'name'
@@ -125,7 +119,6 @@ window.onload = ->
     socket.emit 'fresh-list'
 
   render_topics = ->
-    console.log 'do render_topics'
     html = ''
     for key, value of topic_store
       html += "<div class='post' id='#{value.id}'>
@@ -142,16 +135,18 @@ window.onload = ->
 
   socket.on 'fresh-list', (data) ->
     topic_store = data
+    change_mode 'topics'
     render_topics()
 
   socket.on 'add-topic', (data) ->
     topic_store[data.id] = data
+    console.log data, mode
     if mode is 'topics'
       add_div = document.createElement 'div'
       add_div.setAttribute 'class', 'post'
       add_div.innerHTML = "
           <div class='date'>#{data.time}</div>
-          <div class='reply'>+#{value.reply}</div>
+          <div class='reply'>+#{data.reply}</div>
           <div class='name'>#{data.author}</div>
           <div class='text'>#{data.content}</div>"
       right.appendChild add_div
@@ -174,6 +169,8 @@ window.onload = ->
           <div id='block'>Click to Send Remove Signal</div>
           <div class='text'>#{topic_view.content}</div>
         </div>"
+      (get 'block').onclick = ->
+        socket.emit 'delete-topic', topic
       if post_store[topic]?
         for key, value of post_store[topic]
           right.innerHTML += "
@@ -182,3 +179,57 @@ window.onload = ->
               <div class='name'>#{value.author}</div>
               <div class='text'>#{value.content}</div>
             </div>"
+
+  say_action = ->
+    if saying
+      saying = off
+      socket.emit 'close', (get 'say_box').value
+      (get 'say_area').innerHTML += "<div class='text'>
+        #{(get 'say_box').value}</div>"
+      (get 'say_area').removeChild (get 'say_box')
+      (get 'say_area').removeAttribute 'id'
+    else
+      saying = on
+      say_area = document.createElement 'div'
+      say_area.setAttribute 'class', 'post'
+      say_area.setAttribute 'id', 'say_area'
+      say_area.innerHTML = "
+        <div class='name'>Me</div><br>
+        <textarea id='say_box'></textarea>"
+      right.appendChild say_area
+      (get 'say_box').focus()
+      socket.emit 'open'
+      (get 'say_box').oninput = ->
+        socket.emit 'sync', (get 'say_box').value
+
+  say.onclick = ->
+    if mode is 'say' then say_action()
+  document.onkeydown = (e) ->
+    if e.keyCode is 13
+      if mode is 'say'
+        say_action()
+        false
+
+  socket.on 'close', (data) ->
+    if not post_store[data.topic]?
+      post_store[data.topic] = {}
+    post_store[data.topic][data.id] = data
+    if topic_store[data.topic]?
+      topic_store[data.topic].reply += 1
+      console.log topic_store[data.topic]
+      if mode is 'topics'
+        render_topics()
+
+  socket.on 'sync', (data) ->
+    if (get data.thread)?
+      (get data.thread).innerHTML = "
+        <div class='name'>#{data.author}</div>
+        <div class='text'>#{data.content}</div>"
+    else
+      say_area = document.createElement 'div'
+      say_area.setAttribute 'class', 'post'
+      say_area.setAttribute 'id', data.thread
+      say_area.innerHTML = "
+        <div class='name'>#{data.author}</div>
+        <div class='text'>#{data.content}</div>"
+      right.appendChild say_area

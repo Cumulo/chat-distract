@@ -1,22 +1,4 @@
 
-protocol
-
-  browser-side:
-    'add-topic':
-      'string', (4 < .length < 30)
-    'delete'
-    'commit-post':
-      'string': (4 < .length < 50)
-
-  server-side:
-    'topic-list':
-      'topic-content': number
-      'topic-content': number
-    ''
-
-规划
-  消息从服务器中转, 到达所有客户端
-  分开 topic 和 post, 同时接收所有准确提交的信息
-  一个 log topic 记录成员的加入和退出
-  只能在一个 topic, 可以接收当前 topic 的输入同步
-  
+Noisy-Chat 想做实时聊天工具, Node.js 搭的, 没有数据库支持.
+原先很想多有功能的, 可写这代码畏怯了, 规划结构的能力成问题啊.
+现在我先录个半成品的视频放上土豆再说, 是否修补明天再说.

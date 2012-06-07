@@ -50,8 +50,6 @@ chat = io.of('/chat').on 'connection', (socket) ->
     push_topic store
     chat.emit 'add-topic', store
 
-  socket.on 'sync-post', (data) ->
-
   socket.on 'topic', (topic) ->
     topic = String topic
     if topic isnt my.topic
@@ -64,6 +62,31 @@ chat = io.of('/chat').on 'connection', (socket) ->
     if my.topic?
       socket.leave my.topic
       my.topic = undefined
+
+  socket.on 'delete-topic', (topic) ->
+    topic = String topic
+    if topic_store[topic] then delete topic_store[topic]
+
+  socket.on 'close', (text) ->
+    text = String text
+    store =
+      topic: my.topic
+      id: mark()
+      time: time()
+      author: my.name
+      content: text
+    chat.emit 'close', store
+    my.thread = undefined
+
+  socket.on 'open', ->
+    my.thread = mark()
+
+  socket.on 'sync', (data) ->
+    store =
+      author: my.name
+      content: data
+      thread: my.thread
+    socket.broadcast.to(my.topic).emit 'sync', store
 
 fs.watch 'app/me/handle.js', ->
   chat.emit 'need-refresh'

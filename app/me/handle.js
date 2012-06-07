@@ -32,9 +32,6 @@ window.onload = function() {
   };
   topic_store = {};
   post_store = {};
-  say_action = function() {
-    return change_mode('say');
-  };
   topics.onclick = function() {
     if (mode !== 'topics') {
       change_mode('topics');
@@ -83,11 +80,6 @@ window.onload = function() {
       };
     } else {
       return (get('create_box')).focus();
-    }
-  };
-  say.onclick = function() {
-    if (mode === 'say') {
-      return say_action();
     }
   };
   name.onclick = function() {
@@ -147,7 +139,6 @@ window.onload = function() {
   };
   render_topics = function() {
     var html, key, value, _results;
-    console.log('do render_topics');
     html = '';
     for (key in topic_store) {
       value = topic_store[key];
@@ -167,15 +158,17 @@ window.onload = function() {
   };
   socket.on('fresh-list', function(data) {
     topic_store = data;
+    change_mode('topics');
     return render_topics();
   });
   socket.on('add-topic', function(data) {
     var add_div;
     topic_store[data.id] = data;
+    console.log(data, mode);
     if (mode === 'topics') {
       add_div = document.createElement('div');
       add_div.setAttribute('class', 'post');
-      add_div.innerHTML = "          <div class='date'>" + data.time + "</div>          <div class='reply'>+" + value.reply + "</div>          <div class='name'>" + data.author + "</div>          <div class='text'>" + data.content + "</div>";
+      add_div.innerHTML = "          <div class='date'>" + data.time + "</div>          <div class='reply'>+" + data.reply + "</div>          <div class='name'>" + data.author + "</div>          <div class='text'>" + data.content + "</div>";
       right.appendChild(add_div);
       return add_div.onclick = function() {
         return (function(key) {
@@ -184,7 +177,7 @@ window.onload = function() {
       };
     }
   });
-  return socket.on('topic', function(topic) {
+  socket.on('topic', function(topic) {
     var key, topic_view, value, _ref, _results;
     if (mode !== 'say') {
       change_mode('say');
@@ -199,6 +192,9 @@ window.onload = function() {
         };
       }
       right.innerHTML = "        <div class='post head'>          <div class='date'>" + topic_view.time + "</div>          <div class='name'>" + topic_view.author + "</div>          <div id='block'>Click to Send Remove Signal</div>          <div class='text'>" + topic_view.content + "</div>        </div>";
+      (get('block')).onclick = function() {
+        return socket.emit('delete-topic', topic);
+      };
       if (post_store[topic] != null) {
         _ref = post_store[topic];
         _results = [];
@@ -208,6 +204,66 @@ window.onload = function() {
         }
         return _results;
       }
+    }
+  });
+  say_action = function() {
+    var say_area;
+    if (saying) {
+      saying = false;
+      socket.emit('close', (get('say_box')).value);
+      (get('say_area')).innerHTML += "<div class='text'>        " + (get('say_box')).value + "</div>";
+      (get('say_area')).removeChild(get('say_box'));
+      return (get('say_area')).removeAttribute('id');
+    } else {
+      saying = true;
+      say_area = document.createElement('div');
+      say_area.setAttribute('class', 'post');
+      say_area.setAttribute('id', 'say_area');
+      say_area.innerHTML = "        <div class='name'>Me</div><br>        <textarea id='say_box'></textarea>";
+      right.appendChild(say_area);
+      (get('say_box')).focus();
+      socket.emit('open');
+      return (get('say_box')).oninput = function() {
+        return socket.emit('sync', (get('say_box')).value);
+      };
+    }
+  };
+  say.onclick = function() {
+    if (mode === 'say') {
+      return say_action();
+    }
+  };
+  document.onkeydown = function(e) {
+    if (e.keyCode === 13) {
+      if (mode === 'say') {
+        say_action();
+        return false;
+      }
+    }
+  };
+  socket.on('close', function(data) {
+    if (!(post_store[data.topic] != null)) {
+      post_store[data.topic] = {};
+    }
+    post_store[data.topic][data.id] = data;
+    if (topic_store[data.topic] != null) {
+      topic_store[data.topic].reply += 1;
+      console.log(topic_store[data.topic]);
+      if (mode === 'topics') {
+        return render_topics();
+      }
+    }
+  });
+  return socket.on('sync', function(data) {
+    var say_area;
+    if ((get(data.thread)) != null) {
+      return (get(data.thread)).innerHTML = "        <div class='name'>" + data.author + "</div>        <div class='text'>" + data.content + "</div>";
+    } else {
+      say_area = document.createElement('div');
+      say_area.setAttribute('class', 'post');
+      say_area.setAttribute('id', data.thread);
+      say_area.innerHTML = "        <div class='name'>" + data.author + "</div>        <div class='text'>" + data.content + "</div>";
+      return right.appendChild(say_area);
     }
   });
 };

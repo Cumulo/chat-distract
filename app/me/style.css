@@ -86,7 +86,6 @@ body {
   margin: 0px 40px 20px;
   width: 400px;
   height: 40px;
-  border: 2px solid hsl(200,70%,80%);
   resize: none;
   -webkit-border-radius: 3px;
   font-size: 18px;
@@ -116,4 +115,20 @@ body {
 #block:hover {
   color: hsla(0,80%,80%,0.6);
   -webkit-transition-duration: 0.4s;
+}
+
+#say_box {
+  width: 780px;
+  height: 30px;
+  background: hsl(180,40%,96%);
+  border: 0px;
+  resize: none;
+  -webkit-border-radius: 2px;
+  padding: 7px;
+  box-sizing: border-box;
+}
+
+textarea {
+  outline-width: 0px;
+  border-width: 0px;
 }
