@@ -72,3 +72,22 @@ body {
   line-height: 24px;
   font-family: 'wenquanyi micro hei';
 }
+
+#name_msg {
+  margin: 80px 40px 20px;
+}
+
+#name_box {
+  margin: 0px 40px 20px;
+  width: 400px;
+  height: 40px;
+  border: 2px solid hsl(200,70%,80%);
+  resize: none;
+  -webkit-border-radius: 3px;
+  font-size: 18px;
+  padding: 8px;
+}
+
+#name_send {
+  margin: 0px 40px;
+}

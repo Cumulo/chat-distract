@@ -1,8 +1,4 @@
 
-get = (id) -> document.getElementById id
-mode = 'post'
-saying = no
-
 window.onload = ->
   socket = io.connect 'http://localhost:8000/chat'
 
@@ -12,60 +8,79 @@ window.onload = ->
   socket.on 'ready', ->
     console.log 'ready'
 
-  button = get 'button'
-  write_topic = get 'write_topic'
-  say = get 'say'
-  toggle = get 'toggle'
-
   window.focus()
-  click_function = ->
-    if mode is 'post'
-      write_topic.style.display = 'block'
-      button.innerText = 'Send'
-      button.style.width = '42px'
-      mode = 'topic'
-      write_topic.focus()
-    else if mode is 'topic'
-      topic_content = write_topic.value
-      write_topic.value = ''
-      socket.emit 'add-topic', topic_content
-      button.innerText = '+'
-      write_topic.style.display = 'none'
-      button.style.width = '18px'
-      mode = 'post'
+  named = no
+  saying = no
+  mode = ''
 
-  button.onclick = click_function
+  get = (id) -> document.getElementById id
+  right  = get 'right'
+  topics = get 'topics'
+  create = get 'create'
+  say    = get 'say'
+  name   = get 'name'
+  clear  = get 'clear'
 
-  say_function = ->
-    if mode is 'topic'
-      click_function()
-      false
-    else if mode is 'post'
-      if saying
-        say.style.display = 'none'
-        saying = no
-        toggle.innerText = 'oO'
-      else
-        say.style.display = 'block'
-        say.focus()
-        saying = yes
-        toggle.innerText = 'Oo'
-        socket.emit 'close-post', say.value
-        say.value = ''
-      false
+  change_mode = (item) ->
+    if item isnt mode
+      mode = item
+      say.style.color = (
+        if item is 'say' then 'hsl(0,0%,50%)'
+        else 'hsl(0,0%,80%)' )
 
-  document.onkeydown = (e) ->
-    console.log e.keyCode
-    if e.keyCode is 13
-      say_function()
-  toggle.onclick = ->
-    say_function()
+  topic_list = []
+  topic_store = {}
+  
+  say_action = ->
+      change_mode 'say'
 
-  if localStorage.name?
-    if 1 < localStorage.name.length < 20
-      name = localStorage.name
-  until name?
-    name = prompt('choose a name:') unless name?
-    name = undefined unless 1 < name.length < 20
-  socket.emit 'set-name', name
-  localStorage.name = name
+  topics.onclick = ->
+    if mode isnt 'topics'
+      change_mode 'topics'
+      for item in topic_list
+        log item
+
+  create.onclick = ->
+    if mode isnt 'create'
+      change_mode 'create'
+      right.innerHTML = 'create mode'
+
+  say.onclick = ->
+    if mode isnt 'say' then say_action()
+
+  do name.onclick = ->
+    if mode isnt 'name'
+      change_mode 'name'
+      right.innerHTML = '<div id="name_msg">Input A Name: (1 < Length < 20)</div>
+        <textarea id="name_box"></textarea>
+        <div id="name_send">Waiting</div>'
+      name_msg = get 'name_msg'
+      name_box = get 'name_box'
+      name_send = get 'name_send'
+      name_box.focus()
+      name_box.oninput = ->
+        if name_box.value.length < 2
+          name_msg.innerText = 'Too Short'
+          name_send.innerText = 'Waiting'
+          name_send.onclick = ->
+        else if name_box.value.length > 20
+          name_msg.innerText = 'Too Long now..'
+          name_send.innerText = 'Waiting'
+          name_send.onclick = ->
+        else
+          name_msg.innerText = 'This name should be OK'
+          name_send.innerText = 'Send'
+          name_send.onclick = ->
+            socket.emit 'set-name', name_box.value
+            name_msg.innerText = 'Already Sent'
+            name_send.innerText = 'Sent'
+          name_box.onkeydown = (e) ->
+            if e.keyCode is 13
+              name_send.onclick()
+              false
+    else (get 'name_box').focus()
+
+  clear.onclick = ->
+    topic_list = []
+    topic_store = {}
+    socket.emit 'reload'
