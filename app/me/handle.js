@@ -2,7 +2,7 @@
 
 window.onload = function() {
   var change_mode, clear, create, get, mode, name, post_store, render_topics, right, say, say_action, saying, socket, topic_store, topics;
-  socket = io.connect('http://localhost:8000/chat');
+  socket = io.connect('http://noisy_chat.cnodejs.net:80/chat');
   socket.on('need-refresh', function() {
     return location.reload();
   });

@@ -1,6 +1,6 @@
 
 window.onload = ->
-  socket = io.connect 'http://localhost:8000/chat'
+  socket = io.connect 'http://noisy_chat.cnodejs.net:80/chat'
 
   socket.on 'need-refresh', ->
     location.reload()
