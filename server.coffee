@@ -1,21 +1,22 @@
 
-User = require 'src/user'
-Cumulo = require 'src/cumulo'
+server = require 'ws-json-server'
 
-cumulo = new Cumulo
-cumulo.createPage 'messages'
+session = require './src/session'
+store = require './src/store'
 
-ws.onConnect (client) ->
-  user = new User
-    cumulo: cumulo
-  client.registerUser 'anonymous'
-  cumulo.registerUserPage user,
-    name: 'message'
-    step: 10
-  user.render()
+server.onconnect (ws) ->
+  user = undefined
+  ws.on 'ready', (data) ->
+    if data.id?
+      user = session.findById data.id
+    unless user?
+      user =
+        id: shortid.generate()
+        name: 'default'
+        ws: ws
+      session.add user
+    store.addUser user
 
-  cumulo.registerUser user
+  ws.on 'session', (data) ->
 
-  client.on 'close', ->
-    cumulo.unregister user
-    user = null
+  ws.on 'store', (data) ->
