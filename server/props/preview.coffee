@@ -2,6 +2,14 @@
 db =
   messages: []
 
+dbpath = '../../data/preview.json'
+try
+  raw = require(dbpath)
+  if raw then db = raw
+process.on 'exit', ->
+  dbpath = require('path').join __dirname, dbpath
+  require('fs').writeFileSync dbpath, JSON.stringify(db)
+
 exports.emit = ->
   console.log 'rewrite this in Cumulo'
 
