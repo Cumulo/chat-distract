@@ -1,8 +1,11 @@
 
 React = require 'react'
 
-App = React.createClass
-  render: ->
-    React.DOM.div {}, 'dev'
+ws = new WebSocket 'ws://localhost:3000'
 
-React.renderComponent App(), document.body
+ws.json = (data) ->
+  @send JSON.stringify data
+
+ws.onopen = ->
+  ws.json type: 'store', action: 'name'
+  ws.json type: 'preview', action: 'name'

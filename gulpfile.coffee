@@ -25,7 +25,7 @@ gulp.task 'watch', ->
   transform = require 'vinyl-transform'
   browserify = require 'browserify'
   rename = require 'gulp-rename'
-  reloder = require 'gulp-reloader'
+  reloader = require 'gulp-reloader'
   reloader.listen()
 
   watch glob: 'source/**/*.cirru', emitOnGlob: no, (files) ->
@@ -128,7 +128,7 @@ gulp.task 'clean', (cb) ->
 
 gulp.task 'start', ->
   sequence = require 'run-sequence'
-  sequence 'clean', 'vendor'
+  sequence 'clean', 'vendor', 'dev'
 
 gulp.task 'dev', ->
   sequence = require 'run-sequence'
