@@ -1,18 +1,22 @@
 
 React = require 'react'
+cumulo = require 'cumulo-client'
+
+session = cumulo.session
+transmitter = cumulo.transmitter
 
 ws = new WebSocket 'ws://localhost:3000'
-
-ws.json = (data) ->
-  @send JSON.stringify data
-
-ws.action = (type, action, data) ->
-  data.type = type
-  data.action = action
-  ws.json data
+cumulo.ws = ws
 
 ws.onopen = ->
+  remember = session.get()
+  if remember?
+    data =
+      name: remember.name
+      password: remember.password
+    cumulo.send 'account/login', data
 
-  ws.action 'session', 'create-user',
-    name: 'chen'
-    password: '123456'
+ws.onmessage = (messageObject) ->
+  raw = messageObject.raw
+  action = JSON.parse raw
+  transmitter.dispatch action
