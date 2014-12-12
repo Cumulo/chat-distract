@@ -1,0 +1,81 @@
+
+.app-layout {
+    height: 100%;
+}
+
+.app-layout .guest-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.app-layout .main-page {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.app-layout .thread-wrap,
+.app-layout .message-wrap {
+    flex: 1;
+}
+
+/* thread */
+
+.app-layout .thread-wrap {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.app-layout .thread-wrap > .default-thread {
+    height: 60px;
+    padding: 1em;
+    cursor: pointer;
+}
+
+.default-thread:hover {
+    background: rgb(242, 242, 242);
+}
+
+.app-layout .thread-wrap > .thread-list {
+    flex: 1;
+}
+
+/* message */
+
+.app-layout .message-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border-left: 1px solid rgb(231, 231, 231);
+}
+
+.app-layout .message-wrap > .message-list {
+    flex: 1;
+    overflow: auto;
+}
+
+.app-layout .message-wrap > .message-box {
+    height: 100px;
+}
+
+/* actions */
+
+
+.app-layout .action-bar {
+    width: 80px;
+    background: rgb(244, 244, 244);
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+}
+
+.app-layout .is-inside {
+    background: rgb(248, 235, 255);
+}

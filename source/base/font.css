@@ -1,0 +1,15 @@
+
+body, input, textarea {
+  font-family: 'Source Han Sans CN', Optima, "Hiragino Sans GB";
+  font-size: 16px;
+  line-height: 1.6em;
+}
+
+input, textarea {
+  border: 1px solid rgb(203, 203, 203);
+  outline: none;
+  padding: 0.5em 1em;
+}
+
+input {
+}

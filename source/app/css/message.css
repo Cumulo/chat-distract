@@ -1,0 +1,32 @@
+
+.app-message {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    position: relative;
+}
+
+.app-message .body {
+}
+
+.app-message .thread {
+    position: absolute;
+    right: 1em;
+    top: 0.5em;
+    cursor: pointer;
+    color: rgb(207, 226, 255);
+}
+
+.app-message .thread.is-thread {
+    color: rgb(94, 15, 255);
+    font-weight: bold;
+}
+
+.app-message .app-avatar {
+    margin: 0 10px;
+}
+
+.app-message .time {
+    font-size: 12px;
+    color: rgb(179, 179, 179);
+}

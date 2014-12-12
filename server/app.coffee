@@ -14,10 +14,16 @@ preview = require './view/preview'
 # bring up database
 require('./database')
 
+# for debugging
+router.display = (state, action) ->
+  console.log state.userId, action
+
 wss = new Server port: 3000
 wss.on 'connection', (ws) ->
 
   state =
+    # states will dispatch based on userId?
+    userId: null
     id: shortid.generate()
     cache: {}
     ws: ws

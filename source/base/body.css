@@ -1,0 +1,10 @@
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+body * {
+  box-sizing: border-box;
+  /* box-shadow: 0 0 1px rgba(0, 0, 0, 0.38); */
+}

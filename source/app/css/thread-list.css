@@ -1,0 +1,13 @@
+
+.thread-list {}
+
+.thread-list .app-message {
+  cursor: pointer;
+}
+
+.thread-list .app-message:hover {
+  background: rgb(247, 247, 247);
+}
+
+.thread-list .is-inside {
+}

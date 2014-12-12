@@ -1,0 +1,14 @@
+
+.tip-manager {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    width: 400px;
+}
+
+.tip-manager .module-tip {
+    padding: 0.5em 1em;
+    background: #ff6e40;
+    color: white;
+    cursor: pointer;
+}

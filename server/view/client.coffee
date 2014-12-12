@@ -4,7 +4,10 @@ cumulo = require 'cumulo'
 module.exports = new cumulo.View
 
   render: (state) ->
-    # todo
+    unless state.userId?
+      user: null
+      messages: []
+      threads: []
 
   getCache: (state) ->
     # todo

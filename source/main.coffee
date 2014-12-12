@@ -5,6 +5,9 @@ cumulo = require 'cumulo-client'
 session = cumulo.session
 transmitter = cumulo.transmitter
 
+# activate page rendering
+require './page'
+
 ws = new WebSocket 'ws://localhost:3000'
 cumulo.ws = ws
 

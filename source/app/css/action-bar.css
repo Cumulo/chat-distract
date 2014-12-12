@@ -1,0 +1,7 @@
+
+.action-bar {}
+
+.action-bar .app-avatar {
+    cursor: pointer;
+    background-color: rgb(186, 229, 255);
+}
