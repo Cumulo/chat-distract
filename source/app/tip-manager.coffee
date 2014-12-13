@@ -1,5 +1,5 @@
 
-React = require 'react'
+React = require 'react/addons'
 cumulo = require 'cumulo-client'
 
 tipsStore = require '../store/tips'

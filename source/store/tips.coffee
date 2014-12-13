@@ -9,6 +9,7 @@ module.exports = store
 
 transmitter.register 'tip/add', (data) ->
   store.data.unshift data
+  store.dispatch()
 
 transmitter.register 'tip/remove', (id) ->
   store.data = store.data.filer (tip) ->

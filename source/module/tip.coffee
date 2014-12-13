@@ -1,5 +1,5 @@
 
-React = require 'react'
+React = require 'react/addons'
 
 $ = React.DOM
 
@@ -16,4 +16,4 @@ module.exports = React.createFactory React.createClass
   render: ->
 
     $.div className: 'module-tip', onClick: @onClick,
-      @props.data.text
+      @props.data.msg

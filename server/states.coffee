@@ -3,17 +3,14 @@ cumulo = require 'cumulo'
 lodash = require 'lodash'
 
 router = cumulo.router
-module.exports = cumulo.state
+states = new cumulo.State
 
-client = require './view/client'
-preview = require './view/preview'
+module.exports = states
 
 router.register 'state/morePage', (state, data) ->
   # todo
-  client.patch state
-  preview.patch state
+  states.dispatch state
 
 router.register 'state/update', (state, data) ->
   # todo
-  client.patch state
-  preview.patch state
+  states.dispatch state

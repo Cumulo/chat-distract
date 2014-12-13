@@ -13,13 +13,13 @@ cumulo.ws = ws
 
 ws.onopen = ->
   remember = session.get()
-  if remember?
+  if remember?.name?
     data =
       name: remember.name
       password: remember.password
     cumulo.send 'account/login', data
 
 ws.onmessage = (messageObject) ->
-  raw = messageObject.raw
+  raw = messageObject.data
   action = JSON.parse raw
   transmitter.dispatch action

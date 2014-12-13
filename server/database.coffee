@@ -5,18 +5,22 @@ path = require 'path'
 messages = require './store/messages'
 profiles = require './store/profiles'
 accounts = require './store/accounts'
-previews = require './store/previews'
 
 cumulo.database.init
+  duration: 100000
+
   dbPath: path.join __dirname, '../data/database.json'
-  initialDatabase:
+
+  initialData:
     messages: []
     profiles: []
     accounts: {}
-  shrinkDatabase: ->
+
+  gatherData: ->
     messages: messages.clone()
     profiles: profiles.clone()
     accounts: accounts.clone()
+
   onLoad: (piece) ->
     messages.replace piece.messages
     profiles.replace piece.profiles

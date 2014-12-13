@@ -1,6 +1,7 @@
 
 cumulo = require 'cumulo'
 shortid = require 'shortid'
+lodash = require 'lodash'
 
 router = cumulo.router
 profilesStore = require './profiles'
@@ -37,7 +38,7 @@ router.register 'account/login', (state, data) ->
         type: 'error', msg: 'wrong password'
     else
       user = lodash.find profilesStore.get(), name: data.name
-      state.user = users.id
+      state.userId = user.id
       change = online: yes
       router.dispatch state, name: 'profile/update', data: change
 
