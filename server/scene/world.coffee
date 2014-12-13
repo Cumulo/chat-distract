@@ -17,7 +17,7 @@ module.exports = new cumulo.Scene
   duration: 400
 
   broadcast: ->
-    states.each (state) ->
+    states.each (state) =>
       client.patch state, world: @get()
 
   listen: ->
@@ -25,11 +25,12 @@ module.exports = new cumulo.Scene
       @changed = yes
     messagesStore.register =>
       @changed = yes
-    states.register =>
+    states.register (state) =>
       client.patch state, world: @get()
 
   render: ->
     profiles = profilesStore.get()
+    console.log profiles
     messages = messagesStore.get()
     .map (message) ->
       profile = lodash.find profiles, id: message.userId

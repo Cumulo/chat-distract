@@ -17,9 +17,9 @@ cumulo.database.init
     accounts: {}
 
   gatherData: ->
-    messages: messages.clone()
-    profiles: profiles.clone()
-    accounts: accounts.clone()
+    messages: messages.get()
+    profiles: profiles.get()
+    accounts: accounts.get()
 
   onLoad: (piece) ->
     messages.replace piece.messages

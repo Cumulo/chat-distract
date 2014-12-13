@@ -8,16 +8,16 @@ previewsStore = require '../store/previews'
 states = require '../states'
 preview = require '../view/preview'
 
-worldScene = require './world'
+world = require './world'
 
 module.exports = new cumulo.Scene
 
   data: {}
-  duration: 400
+  duration: 100
 
   broadcast: ->
     states.each (state) =>
-      preview.patch state, typing: @data, world: worldScene.get()
+      preview.patch state, typing: @data, world: world.get()
 
   listen: ->
     profilesStore.register =>
@@ -25,7 +25,7 @@ module.exports = new cumulo.Scene
     previewsStore.register =>
       @changed = yes
     states.register =>
-      preview.patch state, typing: @data, world: worldScene.get()
+      preview.patch state, typing: @data, world: world.get()
 
   render: ->
     profiles = profilesStore.get()

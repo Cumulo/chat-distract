@@ -1,8 +1,10 @@
 
 cumulo = require 'cumulo'
 lodash = require 'lodash'
+shortid = require 'shortid'
 
 profilesStore = require './profiles'
+time = require '../util/time'
 
 router = cumulo.router
 
@@ -12,6 +14,7 @@ module.exports = store
 router.register 'preview/text', (state, data) ->
   user = lodash.find profilesStore.get(), id: state.userId
   info =
+    id: shortid.generate()
     sid: state.id
     thread: user.thread
     userId: state.userId
@@ -25,6 +28,5 @@ router.register 'preview/text', (state, data) ->
 
 router.register 'preview/remove', (state, data) ->
   matchStateId = (x) -> x.sid is state.id
-  left = lodash.remove store.data, matchStateId
-  store.data = left
+  lodash.remove store.data, matchStateId
   store.dispatch()

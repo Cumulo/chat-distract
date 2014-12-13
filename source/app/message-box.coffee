@@ -13,7 +13,10 @@ module.exports = React.createFactory React.createClass
   onTextChange: (event) ->
     text = event.target.value
     @setState text: text
-    cumulo.send 'preview/text', @state.text
+    if text.trim().length > 0
+      cumulo.send 'preview/text', text
+    else
+      cumulo.send 'preview/remove'
 
   onTextSubmit: ->
     cumulo.send 'message/create', @state.text

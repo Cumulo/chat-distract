@@ -8,6 +8,13 @@ transmitter = cumulo.transmitter
 # activate page rendering
 require './page'
 
+session.init
+  key: 'chat-distract'
+  initialSession: {}
+
+transmitter.display = (action) ->
+  console.info action
+
 ws = new WebSocket 'ws://localhost:3000'
 cumulo.ws = ws
 

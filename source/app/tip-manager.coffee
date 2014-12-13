@@ -25,7 +25,7 @@ module.exports = React.createFactory React.createClass
     @setState data: tipsStore.get()
 
   onTipClick: (id) ->
-    transmitter.dispatch 'tip/remove', id
+    transmitter.dispatch name: 'tip/remove', data: id
 
   render: ->
 

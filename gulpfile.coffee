@@ -5,6 +5,7 @@ project = 'chat-distract'
 dev = yes
 libraries = [
   'react'
+  'lodash'
 ]
 
 gulp.task 'folder', ->

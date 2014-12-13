@@ -17,9 +17,9 @@ module.exports = new cumulo.View
   renderGuest: ->
     []
 
-  render: (state, scene) ->
+  renderUser: (state, scene) ->
     typing = scene.typing
     world = scene.world
 
     user = lodash.find world.users, id: state.userId
-    typing[user.thread]
+    typing[user.thread] or []

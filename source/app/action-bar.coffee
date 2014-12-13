@@ -6,6 +6,7 @@ AppAvatar = require './avatar'
 ModuleModal = require '../module/modal'
 AvatarConfig = require './avatar-config'
 
+session = cumulo.session
 $ = React.DOM
 T = React.PropTypes
 
@@ -23,6 +24,7 @@ module.exports = React.createFactory React.createClass
 
   onLogoutClick: ->
     cumulo.send 'account/logout'
+    session.set name: null, password: null
 
   # render methods
 

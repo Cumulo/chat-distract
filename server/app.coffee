@@ -43,6 +43,3 @@ wss.on 'connection', (ws) ->
     states.unrecord state
     console.info 'state unrecord', state.id
     state = null
-
-  # seed browsers
-  states.sync state

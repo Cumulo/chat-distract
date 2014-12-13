@@ -12,6 +12,6 @@ transmitter.register 'tip/add', (data) ->
   store.dispatch()
 
 transmitter.register 'tip/remove', (id) ->
-  store.data = store.data.filer (tip) ->
+  store.data = store.data.filter (tip) ->
     tip.id isnt id
   store.dispatch()

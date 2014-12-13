@@ -23,7 +23,7 @@ router.register 'account/signup', (state, data) ->
         id: shortid.generate()
         name: data.name
         avatar: ''
-        thread: 'defailt'
+        thread: 'default'
         online: yes
       state.userId = user.id
       router.dispatch state, name: 'profile/add', data: user

@@ -1,6 +1,7 @@
 
 cumulo = require 'cumulo'
 shortid = require 'shortid'
+lodash = require 'lodash'
 
 profilesStore = require './profiles'
 time = require '../util/time'
@@ -11,7 +12,7 @@ store = new cumulo.Store data: []
 module.exports = store
 
 router.register 'message/create', (state, data) ->
-  user = lodash.where profilesStore.get(), id: state.userId
+  user = lodash.find profilesStore.get(), id: state.userId
   msg =
     id: shortid.generate()
     time: time.now()

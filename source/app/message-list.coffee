@@ -18,7 +18,7 @@ module.exports = React.createFactory React.createClass
     data: React.PropTypes.array
 
   getInitialState: ->
-    preview: preview.get().typing
+    preview: preview.get()
 
   componentWillUpdate: ->
     @_atBottom = @isScrollAtBottom()
@@ -64,13 +64,13 @@ module.exports = React.createFactory React.createClass
     node.scrollTop < 20
 
   detectLoading: (event) ->
-    report.morePage()
+    cumulo.send 'state/morePage'
 
   # event listener
 
   onPreviewUpdate: ->
     if @isMounted()
-      @setState preview: preview.get().typing
+      @setState preview: preview.get()
 
   onWheel: (event) ->
     @_detectLoading event

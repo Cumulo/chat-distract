@@ -17,16 +17,21 @@ module.exports = new cumulo.View
     messages: []
     threads: []
 
-  render: (state, scene) ->
-    world = scene.world
+  renderUser: (state, scene) ->
     typing = scene.typing
+    threads = scene.world.threads
+
+    user = lodash.find scene.world.users, id: state.userId
+    messages = scene.world.messages[user.thread] or []
 
     page = state.page
     threadLen = page.thread * page.step
     messageLen = page.message * page.step
 
-    user = lodash.find world.users, id: state.userId
-    messages = world.messages[user.thread][...threadLen]
-    threads = world.threads[...messageLen]
+    messagesInView = messages[...threadLen]
+    threadsInView = threads[...messageLen]
 
-    {user, threads, messages}
+    user: user
+    threads: threadsInView
+    messages: messagesInView
+

@@ -2,6 +2,7 @@
 React = require 'react/addons'
 cumulo = require 'cumulo-client'
 
+session = cumulo.session
 $ = React.DOM
 
 module.exports = React.createFactory React.createClass
@@ -22,6 +23,7 @@ module.exports = React.createFactory React.createClass
       name: @state.name
       password: @state.password
     cumulo.send 'account/login', data
+    session.set data
 
   render: ->
 
